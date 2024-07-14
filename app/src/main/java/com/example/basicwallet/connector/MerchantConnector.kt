@@ -1,5 +1,6 @@
 package com.example.basicwallet.connector
 
+import android.util.Log
 import android.content.Context
 import android.accounts.Account
 import com.clover.sdk.v1.merchant.MerchantConnector
@@ -32,6 +33,8 @@ class MerchantConnector(
     }
 
     private fun fetchMerchantInfo() {
-        merchantService.fetchMerchantInfo(merchantConnector.merchant)
+        val cloverMerchant = merchantConnector.merchant
+        val merchant = com.example.basicwallet.service.Merchant(cloverMerchant.id.toInt(), cloverMerchant.name)
+        merchantService.fetchMerchantInfo(merchant)
     }
 }

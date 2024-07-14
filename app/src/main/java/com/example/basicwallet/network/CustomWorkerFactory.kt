@@ -1,7 +1,7 @@
 package com.example.basicwallet.network
 
 import android.content.Context
-import androidx.work.ListenableWorkerFactory
+import androidx.work.WorkerFactory
 import androidx.work.WorkerFactory
 import androidx.work.WorkerParameters
 

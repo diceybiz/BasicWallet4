@@ -27,7 +27,7 @@ import kotlinx.coroutines.launch
 import com.example.basicwallet.service.CustomerSearchService
 import com.example.basicwallet.service.MerchantService
 import androidx.lifecycle.ViewModelProvider
-
+import com.example.basicwallet.model.ErrorType
 
 class MainActivity : AppCompatActivity() {
     private lateinit var walletViewModel: WalletViewModel
@@ -94,7 +94,7 @@ class MainActivity : AppCompatActivity() {
                     // Implement the code to update the customer on the server
                 } catch (e: Exception) {
                     Log.e("MainActivity", "Failed to save balance: ${e.message}")
-                    walletViewModel.setError(ErrorType.UnknownError(e.localizedMessage))
+                    walletViewModel.setError(ErrorType.UnknownError)
                 }
             }
         } else {

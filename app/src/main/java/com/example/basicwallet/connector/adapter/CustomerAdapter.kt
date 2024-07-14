@@ -3,7 +3,9 @@ package com.example.basicwallet.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.basicwallet.R
 import com.example.basicwallet.model.Customer
 
 class CustomerAdapter : RecyclerView.Adapter<CustomerAdapter.CustomerViewHolder>() {
@@ -31,8 +33,10 @@ class CustomerAdapter : RecyclerView.Adapter<CustomerAdapter.CustomerViewHolder>
         fun bind(customer: Customer) {
             // Bind customer data to the views in item_customer.xml
             // For example:
-            itemView.customer_name.text = customer.name
-            itemView.customer_phone.text = customer.phone
+            val customerName = itemView.findViewById<TextView>(R.id.customer_name)
+            val customerPhone = itemView.findViewById<TextView>(R.id.customer_phone)
+            customerName.text = customer.name
+            customerPhone.text = customer.phone
         }
     }
 }
