@@ -2,6 +2,7 @@ package com.example.basicwallet.connector
 
 import android.util.Log
 import android.content.Context
+import android.os.IInterface
 import com.clover.sdk.util.CloverAccount
 import com.clover.sdk.v1.ServiceConnector
 import com.clover.sdk.v1.customer.CustomerConnector
@@ -20,11 +21,11 @@ class CustomCustomerConnector(
         customerConnector?.connect()
     }
 
-    override fun onServiceConnected() {
+    override fun onServiceConnected(p0: ServiceConnector<out IInterface>?) {
         Log.i("CustomCustomerConnector", "CustomerConnector connected")
     }
 
-    override fun onServiceDisconnected() {
+    override fun onServiceDisconnected(p0: ServiceConnector<out IInterface>?) {
         Log.i("CustomCustomerConnector", "CustomerConnector disconnected")
     }
 

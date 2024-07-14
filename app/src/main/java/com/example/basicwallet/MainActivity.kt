@@ -25,6 +25,8 @@ import java.util.concurrent.Executors
 import com.example.basicwallet.service.CustomerSearchService
 import com.example.basicwallet.service.MerchantService
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 
@@ -36,7 +38,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var wooCommerceApiClient: WooCommerceApiClient
     private lateinit var merchantService: MerchantService
     private lateinit var customerSearchService: CustomerSearchService
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,7 +70,7 @@ class MainActivity : AppCompatActivity() {
                     ) {
                         Text(text = "Build Date: ${BuildConfig.BUILD_DATE}", style = MaterialTheme.typography.headlineSmall)
                         Spacer(modifier = Modifier.height(16.dp))
-                        WalletScreen(walletViewModel.balance.value)
+                        WalletScreenContent(balance = walletViewModel.balance.value)
                     }
                 }
             }
@@ -83,7 +84,6 @@ class MainActivity : AppCompatActivity() {
     private fun onSaveBalance() {
         val customer = currentCustomer
         if (customer != null) {
-            val lifecycleScope
             lifecycleScope.launch {
                 try {
                     val metadata = CustomerMetadata().apply {
@@ -97,9 +97,6 @@ class MainActivity : AppCompatActivity() {
                     walletViewModel.setError(ErrorType.UnknownError(e.localizedMessage))
                 }
             }
-        } else {
-            walletViewModel.setError(ErrorType.InvalidInputError)
         }
     }
 }
-

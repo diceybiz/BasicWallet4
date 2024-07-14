@@ -1,9 +1,10 @@
 package com.example.basicwallet.network
 
 import android.content.Context
-import androidx.work.WorkerFactory
+import androidx.work.ListenableWorker
 import androidx.work.WorkerFactory
 import androidx.work.WorkerParameters
+import com.example.basicwallet.network.RetrofitInstance
 
 class CustomWorkerFactory(private val context: Context) : WorkerFactory() {
 

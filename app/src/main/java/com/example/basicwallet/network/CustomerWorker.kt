@@ -3,7 +3,7 @@ package com.example.basicwallet.network
 import android.content.Context
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import com.example.basicwallet.service.CustomerSearchRepository
+import com.example.basicwallet.network.CustomerSearchRepository
 
 class CustomerWorker(
     context: Context,

@@ -26,6 +26,6 @@ public object FragmentWalletBinding {
     }
 
     public static FragmentWalletBinding bind(@NonNull view: View): FragmentWalletBinding {
-        return null
+        return DataBindingUtil.bind(view)!!
     }
 }

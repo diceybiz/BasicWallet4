@@ -26,7 +26,7 @@ class WorkManagerInitializer {
     }
 }
 
-class WalletViewModel private constructor(private val application: Application) : WalletViewModel() {
+class WalletViewModel private constructor(private val application: Application) {
     // ...
 
     companion object {
