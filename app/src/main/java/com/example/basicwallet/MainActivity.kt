@@ -2,13 +2,12 @@ package com.example.basicwallet
 
 import android.os.Bundle
 import android.util.Log
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.clover.sdk.util.CloverAccount
@@ -19,15 +18,15 @@ import com.example.basicwallet.network.WooCommerceApiClient
 import com.example.basicwallet.ui.theme.BasicWalletTheme
 import com.example.basicwallet.ui.theme.WalletScreen
 import com.example.basicwallet.viewmodel.WalletViewModel
+import com.example.basicwallet.viewmodel.ErrorType
 import com.clover.sdk.v3.customers.Customer as CustomerV3
 import com.clover.sdk.v3.customers.CustomerMetadata
 import java.util.concurrent.Executors
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.launch
 import com.example.basicwallet.service.CustomerSearchService
 import com.example.basicwallet.service.MerchantService
 import androidx.lifecycle.ViewModelProvider
-import com.example.basicwallet.model.ErrorType
+import timber.log.Timber
+
 
 class MainActivity : AppCompatActivity() {
     private lateinit var walletViewModel: WalletViewModel
@@ -49,12 +48,12 @@ class MainActivity : AppCompatActivity() {
         val account = CloverAccount.getAccount(this)
 
         if (account != null) {
-            Log.i("MainActivity", "Clover account found: ${account.name}")
+            Timber.i("Clover account found: ${account.name}")
             merchantService = MerchantService(walletViewModel)
             customerSearchService = CustomerSearchService(merchantService)
             walletViewModel = ViewModelProvider(this).get(WalletViewModel::class.java)
         } else {
-            Log.e("MainActivity", "No Clover account found. Please ensure the account is set on the device.")
+            Timber.e("No Clover account found. Please ensure the account is set on the device.")
         }
 
         walletViewModel = ViewModelProvider(this).get(WalletViewModel::class.java)
@@ -70,7 +69,7 @@ class MainActivity : AppCompatActivity() {
                     ) {
                         Text(text = "Build Date: ${BuildConfig.BUILD_DATE}", style = MaterialTheme.typography.headlineSmall)
                         Spacer(modifier = Modifier.height(16.dp))
-                        WalletScreen(walletViewModel.balance.value, ::onSearchCustomer, ::onSaveBalance)
+                        WalletScreen(walletViewModel.balance.value)
                     }
                 }
             }
@@ -84,6 +83,7 @@ class MainActivity : AppCompatActivity() {
     private fun onSaveBalance() {
         val customer = currentCustomer
         if (customer != null) {
+            val lifecycleScope
             lifecycleScope.launch {
                 try {
                     val metadata = CustomerMetadata().apply {
@@ -93,8 +93,8 @@ class MainActivity : AppCompatActivity() {
                     // Save the updated customer data back to the server
                     // Implement the code to update the customer on the server
                 } catch (e: Exception) {
-                    Log.e("MainActivity", "Failed to save balance: ${e.message}")
-                    walletViewModel.setError(ErrorType.UnknownError)
+                    Timber.e("Failed to save balance: ${e.message}")
+                    walletViewModel.setError(ErrorType.UnknownError(e.localizedMessage))
                 }
             }
         } else {
@@ -102,3 +102,4 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
+
