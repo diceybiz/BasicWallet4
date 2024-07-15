@@ -1,8 +1,7 @@
 package com.example.basicwallet.service
 
 import com.example.basicwallet.network.CustomerSearchRepository
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.firstOrNull
 
 class CustomerSearchServiceImpl(private val repository: CustomerSearchRepository) : CustomerSearchService {
 

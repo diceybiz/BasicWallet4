@@ -25,33 +25,13 @@ import timber.log.Timber
 import com.example.basicwallet.service.CustomerSearchServiceImpl
 import com.example.basicwallet.viewmodel.WalletViewModelFactory
 import com.clover.sdk.v3.customers.CustomerMetadata
+
 import com.example.basicwallet.network.CustomerSearchRepository
-
-//import android.util.Log
-//import androidx.activity.ComponentActivity
-
-//import androidx.compose.material3.Text
-//import com.example.basicwallet.connector.CustomCustomerConnector
-//import com.example.basicwallet.connector.MerchantConnector
-//import com.example.basicwallet.ui.theme.WalletScreen
-import com.clover.sdk.v3.customers.Customer as CustomerV3
-
-//import java.util.concurrent.Executors
-//import com.example.basicwallet.service.CustomerSearchService
-//import com.example.basicwallet.service.MerchantService
-import androidx.lifecycle.LifecycleOwner
-//import retrofit2.awaitResponse
-import retrofit2.Response
 
 
 class MainActivity : AppCompatActivity() {
     private lateinit var walletViewModel: WalletViewModel
-//    private var customCustomerConnector: CustomCustomerConnector? = null
-//    private var merchantConnector: MerchantConnector? = null
-//    private var currentCustomer: CustomerV3? = null
     private lateinit var wooCommerceApiClient: WooCommerceApiClient
- //   private lateinit var merchantService: MerchantService
-//    private lateinit var customerSearchService: CustomerSearchService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,7 +40,8 @@ class MainActivity : AppCompatActivity() {
         val networkClient = NetworkClient("https://dicey.biz/wp-json/wc/v3/")
         wooCommerceApiClient = WooCommerceApiClient(networkClient, "ck_fd49704c7f0abb0d51d8f410fc6aa5a3d0ca10e9", "cs_c15cb676dc137fd0a2d30b8b711f7ff5107e31cb")
 
-        val customerSearchService = CustomerSearchServiceImpl(CustomerSearchRepository(customerSearchService))
+        val customerSearchRepository = CustomerSearchRepository(CustomerSearchServiceImpl())
+        val customerSearchService = CustomerSearchServiceImpl(customerSearchRepository)
         val factory = WalletViewModelFactory(application, customerSearchService)
         walletViewModel = ViewModelProvider(this, factory).get(WalletViewModel::class.java)
 
