@@ -1,20 +1,66 @@
 package com.example.basicwallet.viewmodel
 
+
 import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import com.example.basicwallet.network.CustomerSearchRepository
 import com.example.basicwallet.service.CustomerSearchResponse
 import com.example.basicwallet.service.CustomerSearchService
+import com.example.basicwallet.service.CustomerSearchServiceImpl
+import com.example.basicwallet.model.Merchant
 import com.example.basicwallet.model.Customer
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import com.clover.sdk.v3.customers.Customer as CloverCustomer
 
+class WalletViewModel(application: Application) : AndroidViewModel(application) {
+    private val repository = CustomerSearchRepository()
 
+    private val _balance = MutableStateFlow("0")
+    val balance: StateFlow<String> get() = _balance
+
+    private val _currentCustomer = MutableStateFlow<Customer?>(null)
+    val currentCustomer: StateFlow<Customer?> get() = _currentCustomer
+
+    private val _customerDataState = MutableStateFlow<List<Customer>>(emptyList())
+    val customerDataState: StateFlow<List<Customer>> get() = _customerDataState
+
+    fun searchCustomers(query: String) {
+        viewModelScope.launch {
+            val customers = repository.searchCustomers(query)
+            _customerDataState.value = customers
+        }
+    }
+
+    fun searchCustomer(phone: String) {
+        viewModelScope.launch {
+            val customer = repository.searchCustomer(phone)
+            _currentCustomer.value = customer
+        }
+    }
+
+    fun setError(error: ErrorType) {
+        // Handle error
+    }
+
+    fun setMerchant(merchant: Merchant) {
+        // Set merchant
+    }
+}
+
+sealed class ErrorType {
+    object NetworkError : ErrorType()
+    data class UnknownError(val message: String) : ErrorType()
+}
+
+/*
 sealed class ErrorType {
     object NetworkError : ErrorType()
     object InvalidInputError : ErrorType()
@@ -92,3 +138,4 @@ class WalletViewModelFactory(private val application: Application) : ViewModelPr
         throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
+*/

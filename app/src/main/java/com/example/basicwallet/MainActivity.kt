@@ -1,47 +1,54 @@
 package com.example.basicwallet
 
 import android.os.Bundle
-import android.util.Log
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-
+import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.clover.sdk.util.CloverAccount
-import com.example.basicwallet.connector.CustomCustomerConnector
-import com.example.basicwallet.connector.MerchantConnector
-import com.example.basicwallet.network.NetworkClient
-import com.example.basicwallet.network.WooCommerceApiClient
-import com.example.basicwallet.ui.theme.BasicWalletTheme
-import com.example.basicwallet.ui.theme.WalletScreen
-import com.example.basicwallet.ui.theme.WalletScreenContent
-import com.example.basicwallet.viewmodel.WalletViewModel
-import com.example.basicwallet.viewmodel.ErrorType
-import com.clover.sdk.v3.customers.Customer as CustomerV3
-import com.clover.sdk.v3.customers.CustomerMetadata
-import java.util.concurrent.Executors
-import com.example.basicwallet.service.CustomerSearchService
-import com.example.basicwallet.service.MerchantService
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
+import com.clover.sdk.util.CloverAccount
+import com.example.basicwallet.network.NetworkClient
+import com.example.basicwallet.network.WooCommerceApiClient
+import com.example.basicwallet.ui.theme.WalletScreenContent
+import com.example.basicwallet.ui.theme.BasicWalletTheme
+import com.example.basicwallet.viewmodel.WalletViewModel
+import com.example.basicwallet.viewmodel.ErrorType
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import com.clover.sdk.v3.customers.CustomerMetadata
+
+//import android.util.Log
+//import androidx.activity.ComponentActivity
+
+//import androidx.compose.material3.Text
+//import com.example.basicwallet.connector.CustomCustomerConnector
+//import com.example.basicwallet.connector.MerchantConnector
+//import com.example.basicwallet.ui.theme.WalletScreen
+import com.clover.sdk.v3.customers.Customer as CustomerV3
+
+//import java.util.concurrent.Executors
+//import com.example.basicwallet.service.CustomerSearchService
+//import com.example.basicwallet.service.MerchantService
+import androidx.lifecycle.LifecycleOwner
+//import retrofit2.awaitResponse
+import retrofit2.Response
 
 
 class MainActivity : AppCompatActivity() {
     private lateinit var walletViewModel: WalletViewModel
-    private var customCustomerConnector: CustomCustomerConnector? = null
-    private var merchantConnector: MerchantConnector? = null
-    private var currentCustomer: CustomerV3? = null
+//    private var customCustomerConnector: CustomCustomerConnector? = null
+//    private var merchantConnector: MerchantConnector? = null
+//    private var currentCustomer: CustomerV3? = null
     private lateinit var wooCommerceApiClient: WooCommerceApiClient
-    private lateinit var merchantService: MerchantService
-    private lateinit var customerSearchService: CustomerSearchService
+ //   private lateinit var merchantService: MerchantService
+//    private lateinit var customerSearchService: CustomerSearchService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,17 +60,16 @@ class MainActivity : AppCompatActivity() {
         walletViewModel = ViewModelProvider(this).get(WalletViewModel::class.java)
 
         val account = CloverAccount.getAccount(this)
-
         if (account != null) {
             Timber.i("Clover account found: ${account.name}")
-            merchantService = MerchantService(walletViewModel)
-            customerSearchService = CustomerSearchService(merchantService)
-            walletViewModel = ViewModelProvider(this).get(WalletViewModel::class.java)
+//            merchantService = MerchantService(walletViewModel)
+//            customerSearchService = CustomerSearchService(merchantService)
+ //           walletViewModel = ViewModelProvider(this).get(WalletViewModel::class.java)
         } else {
             Timber.e("No Clover account found. Please ensure the account is set on the device.")
         }
 
-        walletViewModel = ViewModelProvider(this).get(WalletViewModel::class.java)
+  //      walletViewModel = ViewModelProvider(this).get(WalletViewModel::class.java)
 
         setContent {
             BasicWalletTheme {
@@ -71,36 +77,46 @@ class MainActivity : AppCompatActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val balance = walletViewModel.balance.value ?: "0"
-                    WalletScreenContent(balance = balance)
+                    WalletScreenContent(balance = walletViewModel.balance.value ?: "0")
                 }
             }
         }
         observeViewModel()
-
     }
-
 
     private fun observeViewModel() {
-        walletViewModel.balance.observe(this, { balance ->
-            // Handle balance update
+        walletViewModel.balance.observe(this, Observer { balance ->
+            // Update UI or perform actions based on the balance change
         })
     }
+
     private fun onSearchCustomer(phone: String) {
         walletViewModel.searchCustomer(phone)
     }
 
     private fun onSaveBalance() {
-        val customer = currentCustomer
+        val customer = walletViewModel.currentCustomer.value
         if (customer != null) {
             lifecycleScope.launch {
                 try {
-                    val metadata = CustomerMetadata().apply {
-                        note = "Wallet Balance: ${walletViewModel.balance.value}"
+                    val tokenResponse = wooCommerceApiClient.authenticate()
+                    if (tokenResponse.isSuccessful) {
+                        val token = tokenResponse.body()?.token ?: ""
+                        val updateResponse = wooCommerceApiClient.updateCustomerStoreCreditBalance(
+                            token,
+                            customer.id.toInt(),
+                            walletViewModel.balance.value?.toInt() ?: 0
+                        )
+                        if (updateResponse.isSuccessful) {
+                            Timber.i("Balance saved successfully")
+                        } else {
+                            Timber.e("Failed to save balance: ${updateResponse.errorBody()?.string()}")
+                            walletViewModel.setError(ErrorType.UnknownError("Failed to save balance"))
+                        }
+                    } else {
+                        Timber.e("Failed to authenticate: ${tokenResponse.errorBody()?.string()}")
+                        walletViewModel.setError(ErrorType.UnknownError("Failed to authenticate"))
                     }
-                    customer.metadata = metadata
-                    // Save the updated customer data back to the server
-                    // Implement the code to update the customer on the server
                 } catch (e: Exception) {
                     Timber.e("Failed to save balance: ${e.message}")
                     walletViewModel.setError(ErrorType.UnknownError(e.localizedMessage))

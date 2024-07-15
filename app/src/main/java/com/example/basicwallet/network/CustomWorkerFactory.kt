@@ -5,10 +5,9 @@ import androidx.work.ListenableWorker
 import androidx.work.WorkerFactory
 import androidx.work.WorkerParameters
 import com.example.basicwallet.viewmodel.WalletViewModel
-import com.example.basicwallet.network.RetrofitInstance
+import com.example.basicwallet.network.CustomerSearchRepository
 
-
-class CustomWorkerFactory(private val context: WalletViewModel) : WorkerFactory() {
+class CustomWorkerFactory(private val walletViewModel: WalletViewModel) : WorkerFactory() {
 
     override fun createWorker(
         appContext: Context,
@@ -20,7 +19,7 @@ class CustomWorkerFactory(private val context: WalletViewModel) : WorkerFactory(
                 CustomerWorker(
                     appContext,
                     workerParameters,
-                    CustomerSearchRepository(RetrofitInstance.getInstance(walletViewModel).api)
+                    CustomerSearchRepository(RetrofitInstance.customerSearchService)
                 )
             }
             else -> null

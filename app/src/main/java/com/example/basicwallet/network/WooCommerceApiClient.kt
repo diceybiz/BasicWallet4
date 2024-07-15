@@ -1,6 +1,5 @@
 package com.example.basicwallet.network
 
-import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.Header
@@ -11,12 +10,12 @@ import retrofit2.http.Path
 class WooCommerceApiClient(private val networkClient: NetworkClient, private val consumerKey: String, private val consumerSecret: String) {
     private val wooCommerceApi: WooCommerceApi = networkClient.getRetrofit().create(WooCommerceApi::class.java)
 
-    fun authenticate(): Call<TokenResponse> {
+    suspend fun authenticate(): Response<TokenResponse> {
         val request = AuthenticateRequest(consumerKey, consumerSecret)
         return wooCommerceApi.authenticate(request)
     }
 
-    fun updateCustomerStoreCreditBalance(token: String, customerId: Int, newStoreCreditBalance: Int): Call<Unit> {
+    suspend fun updateCustomerStoreCreditBalance(token: String, customerId: Int, newStoreCreditBalance: Int): Response<Unit> {
         val request = UpdateCustomerRequest(newStoreCreditBalance)
         return wooCommerceApi.updateCustomerStoreCreditBalance(token, customerId, request)
     }
@@ -24,10 +23,10 @@ class WooCommerceApiClient(private val networkClient: NetworkClient, private val
 
 interface WooCommerceApi {
     @POST("auth/token")
-    fun authenticate(@Body body: AuthenticateRequest): Call<TokenResponse>
+    suspend fun authenticate(@Body body: AuthenticateRequest): Response<TokenResponse>
 
     @PUT("customers/{customer_id}")
-    fun updateCustomerStoreCreditBalance(@Header("Authorization") token: String, @Path("customer_id") customerId: Int, @Body body: UpdateCustomerRequest): Call<Unit>
+    suspend fun updateCustomerStoreCreditBalance(@Header("Authorization") token: String, @Path("customer_id") customerId: Int, @Body body: UpdateCustomerRequest): Response<Unit>
 }
 
 data class AuthenticateRequest(val consumerKey: String, val consumerSecret: String)

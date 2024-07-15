@@ -8,6 +8,9 @@ import com.clover.sdk.v1.ServiceConnector
 import com.clover.sdk.v1.customer.CustomerConnector
 import com.example.basicwallet.service.CustomerSearchServiceImpl
 import com.example.basicwallet.service.CustomerSearchResponse
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class CustomCustomerConnector(
     context: Context,
@@ -30,7 +33,9 @@ class CustomCustomerConnector(
     }
 
     fun searchCustomer(phone: String) {
-        customerSearchService.searchCustomer(phone)
+        CoroutineScope(Dispatchers.IO).launch {
+            customerSearchService.searchCustomer(phone)
+        }
     }
 
     fun disconnect() {
