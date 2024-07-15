@@ -29,7 +29,7 @@
         <!-- WorkManager Initializer -->
         <meta-data
             android:name="androidx.work.WorkManagerInitializer"
-            android:value="androidx.startup" />
+            android:value="androidx.work.impl.WorkManagerInitializer" />
 
         <!-- Main Activity -->
         <activity

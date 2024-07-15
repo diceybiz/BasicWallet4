@@ -20,9 +20,11 @@ class MyApplication : Application() {
 
         val factory = WalletViewModelFactory(this, customerSearchService)
         walletViewModel = factory.create(WalletViewModel::class.java)
-        WorkManagerInitializer.initialize(this, Configuration.Builder()
-            .setWorkerFactory(CustomWorkerFactory(walletViewModel))
-            .build())
+        if (!WorkManager.isInitialized()) {
+            WorkManagerInitializer.initialize(this, Configuration.Builder()
+                .setWorkerFactory(CustomWorkerFactory(walletViewModel))
+                .build())
+        }
     }
 }
 
