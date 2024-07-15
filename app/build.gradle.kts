@@ -103,6 +103,7 @@ android {
         implementation("androidx.lifecycle:lifecycle-viewmodel-compose")
         implementation("androidx.lifecycle:lifecycle-viewmodel-ktx")
         implementation("androidx.lifecycle:lifecycle-livedata-ktx")
+        implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
         implementation("androidx.compose.runtime:runtime-livedata")
         implementation("androidx.appcompat:appcompat:1.7.0")
         implementation("androidx.work:work-runtime-ktx:2.9.0")
