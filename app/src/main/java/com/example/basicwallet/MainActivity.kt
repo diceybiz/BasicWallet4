@@ -22,6 +22,8 @@ import com.example.basicwallet.viewmodel.WalletViewModel
 import com.example.basicwallet.viewmodel.ErrorType
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import com.example.basicwallet.service.CustomerSearchServiceImpl
+import com.example.basicwallet.viewmodel.WalletViewModelFactory
 import com.clover.sdk.v3.customers.CustomerMetadata
 
 //import android.util.Log

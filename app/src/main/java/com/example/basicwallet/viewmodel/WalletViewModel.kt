@@ -1,20 +1,16 @@
 package com.example.basicwallet.viewmodel
 
-
 import android.app.Application
 import androidx.lifecycle.*
-import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import com.example.basicwallet.network.CustomerSearchRepository
 import com.example.basicwallet.service.CustomerSearchResponse
 import com.example.basicwallet.service.CustomerSearchService
-import com.example.basicwallet.service.CustomerSearchServiceImpl
 import com.example.basicwallet.model.Merchant
 import com.example.basicwallet.model.Customer
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import com.clover.sdk.v3.customers.Customer as CloverCustomer
 
 class WalletViewModel(application: Application, private val customerSearchService: CustomerSearchService) : AndroidViewModel(application) {
     private val repository = CustomerSearchRepository(customerSearchService)
