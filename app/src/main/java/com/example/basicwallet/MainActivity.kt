@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
         val networkClient = NetworkClient("https://dicey.biz/wp-json/wc/v3/")
         wooCommerceApiClient = WooCommerceApiClient(networkClient, "ck_fd49704c7f0abb0d51d8f410fc6aa5a3d0ca10e9", "cs_c15cb676dc137fd0a2d30b8b711f7ff5107e31cb")
 
-        val customerSearchRepository = CustomerSearchRepository(CustomerSearchServiceImpl())
+        val customerSearchRepository = CustomerSearchRepository(CustomerSearchServiceImpl(customerSearchRepository))
         val customerSearchService = CustomerSearchServiceImpl(customerSearchRepository)
         val factory = WalletViewModelFactory(application, customerSearchService)
         walletViewModel = ViewModelProvider(this, factory).get(WalletViewModel::class.java)

@@ -15,7 +15,7 @@ class MyApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        val customerSearchRepository = CustomerSearchRepository(CustomerSearchServiceImpl())
+        val customerSearchRepository = CustomerSearchRepository(CustomerSearchServiceImpl(customerSearchRepository))
         val customerSearchService = CustomerSearchServiceImpl(customerSearchRepository)
         val factory = WalletViewModelFactory(this, customerSearchService)
         walletViewModel = factory.create(WalletViewModel::class.java)

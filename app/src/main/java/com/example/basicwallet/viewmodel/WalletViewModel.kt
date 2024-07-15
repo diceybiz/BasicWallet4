@@ -15,8 +15,8 @@ import kotlinx.coroutines.launch
 class WalletViewModel(application: Application, private val customerSearchService: CustomerSearchService) : AndroidViewModel(application) {
     private val repository = CustomerSearchRepository(customerSearchService)
 
-    private val _balance = MutableLiveData<String>()
-    val balance: LiveData<String> get() = _balance
+    private val _balance = MutableLiveData<Int>()
+    val balance: LiveData<Int> get() = _balance
 
     private val _currentCustomer = MutableLiveData<Customer?>()
     val currentCustomer: LiveData<Customer?> get() = _currentCustomer
