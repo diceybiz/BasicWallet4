@@ -28,7 +28,6 @@ import com.clover.sdk.v3.customers.CustomerMetadata
 
 import com.example.basicwallet.network.CustomerSearchRepository
 
-
 class MainActivity : AppCompatActivity() {
     private lateinit var walletViewModel: WalletViewModel
     private lateinit var wooCommerceApiClient: WooCommerceApiClient
