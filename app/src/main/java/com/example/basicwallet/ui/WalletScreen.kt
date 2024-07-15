@@ -20,6 +20,7 @@ import com.example.basicwallet.databinding.FragmentWalletBinding
 import com.example.basicwallet.viewmodel.WalletViewModel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.Flow
 
 class WalletScreen : Fragment(R.layout.fragment_wallet) {
 
@@ -42,7 +43,7 @@ class WalletScreen : Fragment(R.layout.fragment_wallet) {
         }
 
         lifecycleScope.launch {
-            viewModel.customerDataState.collect { customers ->
+            viewModel.customerDataState.collect { customers: List<Customer> ->
                 customerAdapter.submitList(customers)
             }
         }

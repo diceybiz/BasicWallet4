@@ -27,14 +27,14 @@ class WalletViewModel(application: Application, private val customerSearchServic
     fun searchCustomers(query: String) {
         viewModelScope.launch {
             val customers = repository.searchCustomers(query).firstOrNull()
-            _customerDataState.value = customers?.customers ?: emptyList()
+            _customerDataState.value = customers?.customers?.map { it.toModel() } ?: emptyList()
         }
     }
 
     fun searchCustomer(phone: String) {
         viewModelScope.launch {
             val customer = repository.searchCustomer(phone).firstOrNull()
-            _currentCustomer.value = customer?.customers?.firstOrNull()
+            _currentCustomer.value = customer?.customers?.firstOrNull()?.toModel()
         }
     }
 
@@ -50,6 +50,15 @@ class WalletViewModel(application: Application, private val customerSearchServic
 sealed class ErrorType {
     object NetworkError : ErrorType()
     data class UnknownError(val message: String) : ErrorType()
+}
+
+// Extension function to convert service Customer to model Customer
+fun com.example.basicwallet.service.Customer.toModel(): com.example.basicwallet.model.Customer {
+    return com.example.basicwallet.model.Customer(
+        id = this.id,
+        name = this.name,
+        phone = this.phone
+    )
 }
 
 /*

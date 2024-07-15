@@ -18,4 +18,13 @@ class CustomerSearchRepository(private val customerSearchService: CustomerSearch
             emit(response)
         }
     }
+
+    suspend fun searchCustomers(query: String): Flow<CustomerSearchResponse> {
+        return flow {
+            val response = withContext(Dispatchers.IO) {
+                customerSearchService.searchCustomers(query)
+            }
+            emit(response)
+        }
+    }
 }
