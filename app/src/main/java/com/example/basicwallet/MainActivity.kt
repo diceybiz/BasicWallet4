@@ -2,8 +2,10 @@ package com.example.basicwallet
 
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -17,6 +19,7 @@ import com.example.basicwallet.network.NetworkClient
 import com.example.basicwallet.network.WooCommerceApiClient
 import com.example.basicwallet.ui.theme.BasicWalletTheme
 import com.example.basicwallet.ui.theme.WalletScreen
+import com.example.basicwallet.ui.theme.WalletScreenContent
 import com.example.basicwallet.viewmodel.WalletViewModel
 import com.example.basicwallet.viewmodel.ErrorType
 import com.clover.sdk.v3.customers.Customer as CustomerV3
@@ -46,6 +49,8 @@ class MainActivity : AppCompatActivity() {
         val networkClient = NetworkClient("https://dicey.biz/wp-json/wc/v3/")
         wooCommerceApiClient = WooCommerceApiClient(networkClient, "ck_fd49704c7f0abb0d51d8f410fc6aa5a3d0ca10e9", "cs_c15cb676dc137fd0a2d30b8b711f7ff5107e31cb")
 
+        walletViewModel = ViewModelProvider(this).get(WalletViewModel::class.java)
+
         val account = CloverAccount.getAccount(this)
 
         if (account != null) {
@@ -65,18 +70,21 @@ class MainActivity : AppCompatActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp)
-                    ) {
-                        Text(text = "Build Date: ${BuildConfig.BUILD_DATE}", style = MaterialTheme.typography.headlineSmall)
-                        Spacer(modifier = Modifier.height(16.dp))
-                        WalletScreenContent(balance = walletViewModel.balance.value)
-                    }
+                    val balance = walletViewModel.balance.value ?: "0"
+                    WalletScreenContent(balance = balance)
                 }
             }
         }
+        observeViewModel()
+
     }
 
+
+    private fun observeViewModel() {
+        walletViewModel.balance.observe(this, { balance ->
+            // Handle balance update
+        })
+    }
     private fun onSearchCustomer(phone: String) {
         walletViewModel.searchCustomer(phone)
     }

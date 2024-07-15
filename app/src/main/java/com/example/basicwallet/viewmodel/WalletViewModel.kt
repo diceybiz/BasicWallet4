@@ -2,19 +2,19 @@ package com.example.basicwallet.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.MutableLiveData
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+
 import com.example.basicwallet.network.CustomerSearchRepository
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 import com.example.basicwallet.service.CustomerSearchResponse
 import com.example.basicwallet.service.CustomerSearchService
 import com.example.basicwallet.model.Customer
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
+
+import com.clover.sdk.v3.customers.Customer as CloverCustomer
 
 
 sealed class ErrorType {
@@ -34,7 +34,7 @@ class WalletViewModel : ViewModel() {
     private val _errorState = MutableStateFlow<ErrorType?>(null)
     val errorState: StateFlow<ErrorType?> get() = _errorState
 
-    private val _customerDataState = MutableStateFlow<Customer?>(null)
+    private val _customerDataState = MutableStateFlow<CloverCustomer?>(null)
     val customerDataState: StateFlow<Customer?> get() = _customerDataState
 
     private val _isLoadingState = MutableStateFlow(false)
@@ -48,7 +48,7 @@ class WalletViewModel : ViewModel() {
         _errorState.value = error
     }
 
-    fun setCustomerData(customer: Customer) {
+    fun setCustomerData(customer: CloverCustomer?) {
         _customerDataState.value = customer
     }
 

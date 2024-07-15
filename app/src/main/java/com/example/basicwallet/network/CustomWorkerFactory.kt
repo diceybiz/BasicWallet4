@@ -4,9 +4,9 @@ import android.content.Context
 import androidx.work.ListenableWorker
 import androidx.work.WorkerFactory
 import androidx.work.WorkerParameters
-import com.example.basicwallet.network.RetrofitInstance
+import com.example.basicwallet.viewmodel.WalletViewModel
 
-class CustomWorkerFactory(private val context: Context) : WorkerFactory() {
+class CustomWorkerFactory(private val context: WalletViewModel) : WorkerFactory() {
 
     override fun createWorker(
         appContext: Context,

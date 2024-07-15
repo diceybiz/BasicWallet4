@@ -8,6 +8,7 @@ import com.clover.sdk.v1.ServiceConnector
 import com.clover.sdk.v1.customer.CustomerConnector
 import com.example.basicwallet.service.CustomerSearchService
 import com.example.basicwallet.service.CustomerSearchResponse
+import com.example.basicwallet.connector.CustomCustomerConnector
 
 class CustomCustomerConnector(
     context: Context,
