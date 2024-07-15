@@ -6,7 +6,7 @@ import androidx.work.WorkManager
 import com.example.basicwallet.network.CustomWorkerFactory
 import com.example.basicwallet.viewmodel.WalletViewModel
 import com.example.basicwallet.viewmodel.WalletViewModelFactory
-
+import com.example.basicwallet.service.CustomerSearchServiceImpl
 
 class MyApplication : Application() {
 
@@ -14,7 +14,8 @@ class MyApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        val factory = WalletViewModelFactory(this)
+        val customerSearchService = CustomerSearchServiceImpl()
+        val factory = WalletViewModelFactory(this, customerSearchService)
         walletViewModel = factory.create(WalletViewModel::class.java)
         WorkManagerInitializer.initialize(this, Configuration.Builder()
             .setWorkerFactory(CustomWorkerFactory(walletViewModel))

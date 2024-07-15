@@ -1,12 +1,15 @@
 package com.example.basicwallet.service
 
-import com.example.basicwallet.network.RetrofitInstance
+import com.example.basicwallet.network.CustomerSearchRepository
 
-class CustomerSearchServiceImpl(private val merchantService: MerchantService) {
+class CustomerSearchServiceImpl : CustomerSearchService {
+    private val repository = CustomerSearchRepository()
 
-    private val api: CustomerSearchService = RetrofitInstance.customerSearchService
+    override suspend fun searchCustomer(phone: String): CustomerSearchResponse {
+        return repository.searchCustomer(phone)
+    }
 
-    suspend fun searchCustomer(phone: String): CustomerSearchResponse {
-        return api.searchCustomer(phone)
+    override suspend fun searchCustomers(query: String): CustomerSearchResponse {
+        return repository.searchCustomers(query)
     }
 }

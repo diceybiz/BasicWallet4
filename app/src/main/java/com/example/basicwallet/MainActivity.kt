@@ -57,19 +57,16 @@ class MainActivity : AppCompatActivity() {
         val networkClient = NetworkClient("https://dicey.biz/wp-json/wc/v3/")
         wooCommerceApiClient = WooCommerceApiClient(networkClient, "ck_fd49704c7f0abb0d51d8f410fc6aa5a3d0ca10e9", "cs_c15cb676dc137fd0a2d30b8b711f7ff5107e31cb")
 
-        walletViewModel = ViewModelProvider(this).get(WalletViewModel::class.java)
+        val customerSearchService = CustomerSearchServiceImpl()
+        val factory = WalletViewModelFactory(application, customerSearchService)
+        walletViewModel = ViewModelProvider(this, factory).get(WalletViewModel::class.java)
 
         val account = CloverAccount.getAccount(this)
         if (account != null) {
             Timber.i("Clover account found: ${account.name}")
-//            merchantService = MerchantService(walletViewModel)
-//            customerSearchService = CustomerSearchService(merchantService)
- //           walletViewModel = ViewModelProvider(this).get(WalletViewModel::class.java)
         } else {
             Timber.e("No Clover account found. Please ensure the account is set on the device.")
         }
-
-  //      walletViewModel = ViewModelProvider(this).get(WalletViewModel::class.java)
 
         setContent {
             BasicWalletTheme {
