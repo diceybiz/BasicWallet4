@@ -11,7 +11,9 @@ class WalletViewModelFactory(
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(WalletViewModel::class.java)) {
-            return WalletViewModel(application, customerSearchService) as T
+            return WalletViewModel(application, customerSearchService) as? T
+                ?: throw IllegalArgumentException("Unknown ViewModel class")
+
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

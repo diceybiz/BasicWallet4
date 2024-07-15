@@ -45,6 +45,8 @@ class WalletViewModel(application: Application, private val customerSearchServic
     fun setMerchant(merchant: Merchant) {
         // Set merchant
     }
+
+
 }
 
 sealed class ErrorType {

@@ -17,7 +17,7 @@ class CustomerSearchRepository(private var customerSearchService: CustomerSearch
     suspend fun searchCustomer(phone: String): Flow<CustomerSearchResponse> {
         return flow {
             val response = withContext(Dispatchers.IO) {
-                customerSearchService?.searchCustomer(phone)
+                customerSearchService?.searchCustomer(phone) ?: throw Exception("Customer search service returned null")
             }
             emit(response)
         }
@@ -26,7 +26,7 @@ class CustomerSearchRepository(private var customerSearchService: CustomerSearch
     suspend fun searchCustomers(query: String): Flow<CustomerSearchResponse> {
         return flow {
             val response = withContext(Dispatchers.IO) {
-                customerSearchService?.searchCustomers(query)
+                customerSearchService?.searchCustomers(query) ?: throw Exception("Customer search service returned null")
             }
             emit(response)
         }

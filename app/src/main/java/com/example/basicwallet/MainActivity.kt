@@ -25,9 +25,8 @@ import timber.log.Timber
 import com.example.basicwallet.service.CustomerSearchServiceImpl
 import com.example.basicwallet.viewmodel.WalletViewModelFactory
 import com.clover.sdk.v3.customers.CustomerMetadata
-
-import com.example.basicwallet.network.CustomerSearchRepository
 import com.example.basicwallet.service.ServiceFactory
+import com.example.basicwallet.network.CustomerSearchRepository
 
 class MainActivity : AppCompatActivity() {
     private lateinit var walletViewModel: WalletViewModel
@@ -44,7 +43,6 @@ class MainActivity : AppCompatActivity() {
         val factory = WalletViewModelFactory(application, customerSearchService)
         walletViewModel = ViewModelProvider(this, factory).get(WalletViewModel::class.java)
 
-
         val account = CloverAccount.getAccount(this)
         if (account != null) {
             Timber.i("Clover account found: ${account.name}")
@@ -59,7 +57,6 @@ class MainActivity : AppCompatActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     WalletScreenContent(balance = walletViewModel.balance.value?.toString() ?: "0")
-
                 }
             }
         }
@@ -101,9 +98,10 @@ class MainActivity : AppCompatActivity() {
                     }
                 } catch (e: Exception) {
                     Timber.e("Failed to save balance: ${e.message}")
-                    walletViewModel.setError(ErrorType.UnknownError(e.localizedMessage))
+                    walletViewModel.setError(ErrorType.UnknownError(e.localizedMessage ?: "Unknown error"))
                 }
             }
         }
     }
 }
+
