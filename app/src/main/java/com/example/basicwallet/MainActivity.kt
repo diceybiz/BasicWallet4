@@ -27,6 +27,7 @@ import com.example.basicwallet.viewmodel.WalletViewModelFactory
 import com.clover.sdk.v3.customers.CustomerMetadata
 
 import com.example.basicwallet.network.CustomerSearchRepository
+import com.example.basicwallet.service.ServiceFactory
 
 class MainActivity : AppCompatActivity() {
     private lateinit var walletViewModel: WalletViewModel
@@ -39,10 +40,10 @@ class MainActivity : AppCompatActivity() {
         val networkClient = NetworkClient("https://dicey.biz/wp-json/wc/v3/")
         wooCommerceApiClient = WooCommerceApiClient(networkClient, "ck_fd49704c7f0abb0d51d8f410fc6aa5a3d0ca10e9", "cs_c15cb676dc137fd0a2d30b8b711f7ff5107e31cb")
 
-        val customerSearchRepository = CustomerSearchRepository(CustomerSearchServiceImpl(customerSearchRepository))
-        val customerSearchService = CustomerSearchServiceImpl(customerSearchRepository)
+        val customerSearchService = ServiceFactory.createCustomerSearchService()
         val factory = WalletViewModelFactory(application, customerSearchService)
         walletViewModel = ViewModelProvider(this, factory).get(WalletViewModel::class.java)
+
 
         val account = CloverAccount.getAccount(this)
         if (account != null) {
@@ -57,7 +58,8 @@ class MainActivity : AppCompatActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    WalletScreenContent(balance = walletViewModel.balance.value ?: "0")
+                    WalletScreenContent(balance = walletViewModel.balance.value?.toString() ?: "0")
+
                 }
             }
         }

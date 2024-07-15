@@ -8,6 +8,7 @@ import com.example.basicwallet.viewmodel.WalletViewModel
 import com.example.basicwallet.viewmodel.WalletViewModelFactory
 import com.example.basicwallet.service.CustomerSearchServiceImpl
 import com.example.basicwallet.network.CustomerSearchRepository
+import com.example.basicwallet.service.ServiceFactory
 
 class MyApplication : Application() {
 
@@ -15,8 +16,8 @@ class MyApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        val customerSearchRepository = CustomerSearchRepository(CustomerSearchServiceImpl(customerSearchRepository))
-        val customerSearchService = CustomerSearchServiceImpl(customerSearchRepository)
+        val customerSearchService = ServiceFactory.createCustomerSearchService()
+
         val factory = WalletViewModelFactory(this, customerSearchService)
         walletViewModel = factory.create(WalletViewModel::class.java)
         WorkManagerInitializer.initialize(this, Configuration.Builder()

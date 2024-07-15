@@ -13,6 +13,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.asFlow
 import androidx.recyclerview.widget.RecyclerView
 import com.example.basicwallet.R
 import com.example.basicwallet.adapter.CustomerAdapter
@@ -44,7 +45,8 @@ class WalletScreen : Fragment(R.layout.fragment_wallet) {
         }
 
         lifecycleScope.launch {
-            viewModel.customerDataState.collect { customers: List<Customer> ->
+            viewModel.customerDataState.asFlow().collect { customers: List<Customer> ->
+
                 customerAdapter.submitList(customers)
             }
         }
