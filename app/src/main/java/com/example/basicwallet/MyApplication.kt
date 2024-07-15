@@ -5,6 +5,32 @@ import androidx.work.Configuration
 import androidx.work.WorkManager
 import com.example.basicwallet.network.CustomWorkerFactory
 import com.example.basicwallet.viewmodel.WalletViewModel
+import com.example.basicwallet.viewmodel.WalletViewModelFactory
+
+
+class MyApplication : Application() {
+
+    private lateinit var walletViewModel: WalletViewModel
+
+    override fun onCreate() {
+        super.onCreate()
+        val factory = WalletViewModelFactory(this)
+        walletViewModel = factory.create(WalletViewModel::class.java)
+        WorkManagerInitializer.initialize(this, Configuration.Builder()
+            .setWorkerFactory(CustomWorkerFactory(walletViewModel))
+            .build())
+    }
+}
+
+class WorkManagerInitializer {
+    companion object {
+        fun initialize(application: Application, configuration: Configuration) {
+            WorkManager.initialize(application, configuration)
+        }
+    }
+}
+
+/*
 
 class MyApplication : Application() {
     private val walletViewModel = WalletViewModel.getInstance(this)
@@ -40,3 +66,4 @@ class WalletViewModel private constructor(private val application: Application) 
         }
     }
 }
+*/

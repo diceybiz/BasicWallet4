@@ -29,6 +29,7 @@ import com.example.basicwallet.service.CustomerSearchService
 import com.example.basicwallet.service.MerchantService
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.observe
 import kotlinx.coroutines.launch
 import timber.log.Timber
 

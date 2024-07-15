@@ -42,7 +42,7 @@ class WalletScreen : Fragment(R.layout.fragment_wallet) {
         }
 
         lifecycleScope.launch {
-            viewModel.customers.collect { customers ->
+            viewModel.customerDataState.collect { customers ->
                 customerAdapter.submitList(customers)
             }
         }

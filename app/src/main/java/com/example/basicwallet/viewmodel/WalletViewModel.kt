@@ -6,14 +6,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-
 import com.example.basicwallet.network.CustomerSearchRepository
 import com.example.basicwallet.service.CustomerSearchResponse
 import com.example.basicwallet.service.CustomerSearchService
 import com.example.basicwallet.model.Customer
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-
 import com.clover.sdk.v3.customers.Customer as CloverCustomer
 
 
@@ -23,8 +21,8 @@ sealed class ErrorType {
     data class UnknownError(val message: String) : ErrorType()
 }
 
-class WalletViewModel : ViewModel() {
-    val balance = MutableLiveData<String>()
+class WalletViewModel private constructor(application: Application) : ViewModel() {
+    val balance = MutableStateFlow("0")
 
     private val customerSearchRepository = CustomerSearchRepository(CustomerSearchService())
 
@@ -35,16 +33,16 @@ class WalletViewModel : ViewModel() {
     val errorState: StateFlow<ErrorType?> get() = _errorState
 
     private val _customerDataState = MutableStateFlow<CloverCustomer?>(null)
-    val customerDataState: StateFlow<Customer?> get() = _customerDataState
+    val customerDataState: StateFlow<CloverCustomer?> get() = _customerDataState
 
     private val _isLoadingState = MutableStateFlow(false)
     val isLoadingState: StateFlow<Boolean> get() = _isLoadingState
 
-    fun setBalance(newBalance: Int) {
-        _balanceState.value = newBalance
+    fun setBalance(newBalance: String) {
+        balance.value = newBalance
     }
 
-    fun setError(error: ErrorType) {
+    fun setError(error: ErrorType?) {
         _errorState.value = error
     }
 
@@ -84,5 +82,13 @@ class WalletViewModel : ViewModel() {
             }
             return instance!!
         }
+    }
+}
+class WalletViewModelFactory(private val application: Application) : ViewModelProvider.Factory {
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        if (modelClass.isAssignableFrom(WalletViewModel::class.java)) {
+            return WalletViewModel(application) as T
+        }
+        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

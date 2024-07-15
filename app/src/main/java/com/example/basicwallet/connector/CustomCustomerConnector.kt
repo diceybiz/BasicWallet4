@@ -6,13 +6,12 @@ import android.os.IInterface
 import com.clover.sdk.util.CloverAccount
 import com.clover.sdk.v1.ServiceConnector
 import com.clover.sdk.v1.customer.CustomerConnector
-import com.example.basicwallet.service.CustomerSearchService
+import com.example.basicwallet.service.CustomerSearchServiceImpl
 import com.example.basicwallet.service.CustomerSearchResponse
-import com.example.basicwallet.connector.CustomCustomerConnector
 
 class CustomCustomerConnector(
     context: Context,
-    private val customerSearchService: CustomerSearchService
+    private val customerSearchService: CustomerSearchServiceImpl
 ) : ServiceConnector.OnServiceConnectedListener {
     private var customerConnector: CustomerConnector? = null
 
