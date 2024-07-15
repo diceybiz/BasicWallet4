@@ -21,6 +21,7 @@ import com.example.basicwallet.viewmodel.WalletViewModel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.Flow
+import com.example.basicwallet.model.Customer
 
 class WalletScreen : Fragment(R.layout.fragment_wallet) {
 
