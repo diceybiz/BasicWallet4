@@ -32,76 +32,83 @@ class MainActivity : AppCompatActivity() {
     private lateinit var walletViewModel: WalletViewModel
     private lateinit var wooCommerceApiClient: WooCommerceApiClient
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
-        val networkClient = NetworkClient("https://dicey.biz/wp-json/wc/v3/")
-        wooCommerceApiClient = WooCommerceApiClient(networkClient, "ck_fd49704c7f0abb0d51d8f410fc6aa5a3d0ca10e9", "cs_c15cb676dc137fd0a2d30b8b711f7ff5107e31cb")
-
-        val customerSearchService = ServiceFactory.createCustomerSearchService()
-        val factory = WalletViewModelFactory(application, customerSearchService)
-        walletViewModel = ViewModelProvider(this, factory).get(WalletViewModel::class.java)
-
-        val account = CloverAccount.getAccount(this)
-        if (account != null) {
-            Timber.i("Clover account found: ${account.name}")
-        } else {
-            Timber.e("No Clover account found. Please ensure the account is set on the device.")
+    setContent {
+        BasicWalletTheme {
+            // Observe the customer data state
+            val customers by walletViewModel.customerDataState.observeAsState(emptyList())
+            // Pass the list of customers to the WalletScreenContent composable function
+            WalletScreenContent(balance = walletViewModel.balance.value?.toString() ?: "0", customers = customers)
         }
+    }
 
-        setContent {
-            BasicWalletTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    WalletScreenContent(balance = walletViewModel.balance.value?.toString() ?: "0")
-                }
+
+    val networkClient = NetworkClient("https://dicey.biz/wp-json/wc/v3/")
+    wooCommerceApiClient = WooCommerceApiClient(networkClient, "ck_fd49704c7f0abb0d51d8f410fc6aa5a3d0ca10e9", "cs_c15cb676dc137fd0a2d30b8b711f7ff5107e31cb")
+
+    val customerSearchService = ServiceFactory.createCustomerSearchService()
+    val factory = WalletViewModelFactory(application, customerSearchService)
+    walletViewModel = ViewModelProvider(this, factory).get(WalletViewModel::class.java)
+
+    val account = CloverAccount.getAccount(this)
+    if (account != null) {
+        Timber.i("Clover account found: ${account.name}")
+    } else {
+        Timber.e("No Clover account found. Please ensure the account is set on the device.")
+    }
+
+    setContent {
+        BasicWalletTheme {
+            Surface(
+                modifier = Modifier.fillMaxSize(),
+                color = MaterialTheme.colorScheme.background
+            ) {
+                WalletScreenContent(balance = walletViewModel.balance.value?.toString() ?: "0")
             }
         }
-        observeViewModel()
     }
+    observeViewModel()
+}
 
-    private fun observeViewModel() {
-        walletViewModel.balance.observe(this, Observer { balance ->
-            // Update UI or perform actions based on the balance change
-        })
-    }
+private fun observeViewModel() {
+    walletViewModel.balance.observe(this, Observer { balance ->
+        // Update UI or perform actions based on the balance change
+    })
+}
 
-    private fun onSearchCustomer(phone: String) {
-        walletViewModel.searchCustomer(phone)
-    }
+private fun onSearchCustomer(phone: String) {
+    walletViewModel.searchCustomer(phone)
+}
 
-    private fun onSaveBalance() {
-        val customer = walletViewModel.currentCustomer.value
-        if (customer != null) {
-            lifecycleScope.launch {
-                try {
-                    val tokenResponse = wooCommerceApiClient.authenticate()
-                    if (tokenResponse.isSuccessful) {
-                        val token = tokenResponse.body()?.token ?: ""
-                        val updateResponse = wooCommerceApiClient.updateCustomerStoreCreditBalance(
-                            token,
-                            customer.id.toInt(),
-                            walletViewModel.balance.value?.toInt() ?: 0
-                        )
-                        if (updateResponse.isSuccessful) {
-                            Timber.i("Balance saved successfully")
-                        } else {
-                            Timber.e("Failed to save balance: ${updateResponse.errorBody()?.string()}")
-                            walletViewModel.setError(ErrorType.UnknownError("Failed to save balance"))
-                        }
+private fun onSaveBalance() {
+    val customer = walletViewModel.currentCustomer.value
+    if (customer != null) {
+        lifecycleScope.launch {
+            try {
+                val tokenResponse = wooCommerceApiClient.authenticate()
+                if (tokenResponse.isSuccessful) {
+                    val token = tokenResponse.body()?.token ?: ""
+                    val updateResponse = wooCommerceApiClient.updateCustomerStoreCreditBalance(
+                        token,
+                        customer.id.toInt(),
+                        walletViewModel.balance.value?.toInt() ?: 0
+                    )
+                    if (updateResponse.isSuccessful) {
+                        Timber.i("Balance saved successfully")
                     } else {
-                        Timber.e("Failed to authenticate: ${tokenResponse.errorBody()?.string()}")
-                        walletViewModel.setError(ErrorType.UnknownError("Failed to authenticate"))
+                        Timber.e("Failed to save balance: ${updateResponse.errorBody()?.string()}")
+                        walletViewModel.setError(ErrorType.UnknownError("Failed to save balance"))
                     }
-                } catch (e: Exception) {
-                    Timber.e("Failed to save balance: ${e.message}")
-                    walletViewModel.setError(ErrorType.UnknownError(e.localizedMessage ?: "Unknown error"))
+                } else {
+                    Timber.e("Failed to authenticate: ${tokenResponse.errorBody()?.string()}")
+                    walletViewModel.setError(ErrorType.UnknownError("Failed to authenticate"))
                 }
+            } catch (e: Exception) {
+                Timber.e("Failed to save balance: ${e.message}")
+                walletViewModel.setError(ErrorType.UnknownError(e.localizedMessage ?: "Unknown error"))
             }
         }
     }
+}
 }
 

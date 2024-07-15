@@ -38,31 +38,97 @@ class WalletScreen : Fragment(R.layout.fragment_wallet) {
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
 
-        customerAdapter = CustomerAdapter()
-        binding.customerRecyclerView.apply {
-            layoutManager = LinearLayoutManager(context)
-            adapter = customerAdapter
-        }
-
-        lifecycleScope.launch {
-            viewModel.customerDataState.asFlow().collect { customers: List<Customer> ->
-
-                customerAdapter.submitList(customers)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
+            Text(
+                text = "Wallet Balance: $balance",
+                style = MaterialTheme.typography.h6
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            // EditText for search input
+            var searchQuery by remember { mutableStateOf("") }
+            TextField(
+                value = searchQuery,
+                onValueChange = { searchQuery = it },
+                label = { Text("Search") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            // Button for search action
+            Button(
+                onClick = { /* Handle search action */ },
+                modifier = Modifier.align(Alignment.End)
+            ) {
+                Text("Search")
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            // RecyclerView for displaying customer list
+            LazyColumn {
+                items(/* List of customers */) { customer ->
+                    Text(text = customer.name)
+                }
             }
         }
+    }
 
-        binding.searchButton.setOnClickListener {
-            val query = binding.searchEditText.text.toString()
-            viewModel.searchCustomers(query)
+    binding.customerRecyclerView.apply {
+        layoutManager = LinearLayoutManager(context)
+        adapter = customerAdapter
+    }
+
+    lifecycleScope.launch {
+        viewModel.customerDataState.asFlow().collect { customers: List<Customer> ->
+
+            customerAdapter.submitList(customers)
         }
     }
+
+    binding.searchButton.setOnClickListener {
+        val query = binding.searchEditText.text.toString()
+        viewModel.searchCustomers(query)
+    }
+}
 }
 
 @Composable
-fun WalletScreenContent(balance: String) {
+
+fun WalletScreenContent(balance: String, customers: List<Customer>) {
     Column(
-        modifier = Modifier.padding(16.dp)
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
     ) {
-        Text(text = "Wallet Balance: $balance", style = MaterialTheme.typography.headlineSmall)
+        Text(
+            text = "Wallet Balance: $balance",
+            style = MaterialTheme.typography.h6
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        // EditText for search input
+        var searchQuery by remember { mutableStateOf("") }
+        TextField(
+            value = searchQuery,
+            onValueChange = { searchQuery = it },
+            label = { Text("Search") },
+            modifier = Modifier.fillMaxWidth()
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        // Button for search action
+        Button(
+            onClick = { /* Handle search action */ },
+            modifier = Modifier.align(Alignment.End)
+        ) {
+            Text("Search")
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        // RecyclerView for displaying customer list
+        LazyColumn {
+            items(customers) { customer ->
+                Text(text = customer.name)
+            }
+        }
     }
 }
+
