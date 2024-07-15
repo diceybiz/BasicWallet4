@@ -4,8 +4,8 @@ import com.example.basicwallet.network.CustomerSearchRepository
 
 object ServiceFactory {
     fun createCustomerSearchService(): CustomerSearchServiceImpl {
-        val customerSearchRepository = CustomerSearchRepository(CustomerSearchServiceImpl())
+        val customerSearchService = CustomerSearchServiceImpl()
+        val customerSearchRepository = CustomerSearchRepository(customerSearchService)
         return CustomerSearchServiceImpl(customerSearchRepository)
     }
 }
-

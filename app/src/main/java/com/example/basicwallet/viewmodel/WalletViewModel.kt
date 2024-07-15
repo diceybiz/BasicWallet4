@@ -55,7 +55,8 @@ sealed class ErrorType {
 // Extension function to convert service Customer to model Customer
 fun com.example.basicwallet.service.Customer.toModel(): com.example.basicwallet.model.Customer {
     return com.example.basicwallet.model.Customer(
-        id = this.id,
+        id = this.id.toInt(),
+
         name = this.name,
         phone = this.phone
     )
