@@ -50,7 +50,7 @@ class WalletScreen : Fragment(R.layout.fragment_wallet) {
 
 
 }
-}
+
 
 @Composable
 
