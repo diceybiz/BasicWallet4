@@ -75,6 +75,7 @@ class MainActivity : AppCompatActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
 
+
                     val customers = walletViewModel.customerDataState.observeAsState(emptyList()).value
 
                     WalletScreenContent(balance = walletViewModel.balance.value?.toString() ?: "0", customers = customers)
