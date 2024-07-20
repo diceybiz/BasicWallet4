@@ -2,12 +2,16 @@ package com.example.basicwallet
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.observe
@@ -32,7 +36,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var walletViewModel: WalletViewModel
     private lateinit var wooCommerceApiClient: WooCommerceApiClient
 
-
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+/*
     setContent {
         BasicWalletTheme {
             // Observe the customer data state
@@ -41,15 +47,17 @@ class MainActivity : AppCompatActivity() {
             WalletScreenContent(balance = walletViewModel.balance.value?.toString() ?: "0", customers = customers)
         }
     }
-
-
+*/
+    // Initialize NetworkClient and WooCommerceApiClient
     val networkClient = NetworkClient("https://dicey.biz/wp-json/wc/v3/")
     wooCommerceApiClient = WooCommerceApiClient(networkClient, "ck_fd49704c7f0abb0d51d8f410fc6aa5a3d0ca10e9", "cs_c15cb676dc137fd0a2d30b8b711f7ff5107e31cb")
 
+    // Initialize WalletViewModel
     val customerSearchService = ServiceFactory.createCustomerSearchService()
     val factory = WalletViewModelFactory(application, customerSearchService)
     walletViewModel = ViewModelProvider(this, factory).get(WalletViewModel::class.java)
 
+    // Check for Clover account
     val account = CloverAccount.getAccount(this)
     if (account != null) {
         Timber.i("Clover account found: ${account.name}")
@@ -57,12 +65,14 @@ class MainActivity : AppCompatActivity() {
         Timber.e("No Clover account found. Please ensure the account is set on the device.")
     }
 
+    // Set up the UI
     setContent {
         BasicWalletTheme {
             Surface(
                 modifier = Modifier.fillMaxSize(),
                 color = MaterialTheme.colorScheme.background
             ) {
+                val customers by walletViewModel.customerDataState.observeAsState(emptyList())
                 WalletScreenContent(balance = walletViewModel.balance.value?.toString() ?: "0")
             }
         }
