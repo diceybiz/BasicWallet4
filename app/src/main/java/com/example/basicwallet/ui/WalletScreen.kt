@@ -50,7 +50,7 @@ class WalletScreen : Fragment(R.layout.fragment_wallet) {
 
 
 }
-
+}
 
 @Composable
 
@@ -59,6 +59,10 @@ fun WalletScreenContent(balance: String, customers: List<Customer>) {
 
     val searchQuery = remember { mutableStateOf("") }
     val balanceState = remember { mutableStateOf(balance) }
+
+
+    val version = "1.0.0" // Replace with actual version
+    val buildDateTime = "2023-10-01 12:00:00" // Replace with actual build date/time
 
     Column(
         modifier = Modifier
@@ -72,7 +76,11 @@ fun WalletScreenContent(balance: String, customers: List<Customer>) {
             label = { Text("Search") }
         )
         Spacer(modifier = Modifier.height(8.dp))
-        Button(onClick = { /* Handle search */ }) {
+
+        Button(onClick = {
+            // Handle search
+            println("Search button clicked with query: ${searchQuery.value}")
+        }) {
             Text("Search")
         }
         Spacer(modifier = Modifier.height(16.dp))
