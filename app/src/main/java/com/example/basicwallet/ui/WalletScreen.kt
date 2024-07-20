@@ -3,7 +3,52 @@ package com.example.basicwallet.ui.theme
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+
+import androidx.compose.runtime.*
+import androidx.compose.material3.*
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.text.input.TextFieldValue
+
+@Composable
+fun WalletScreenContent(balance: String, customers: List<Customer>) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Text(
+            text = "Wallet Balance: $balance",
+            style = MaterialTheme.typography.h6
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        var searchQuery by remember { mutableStateOf("") }
+        TextField(
+            value = searchQuery,
+            onValueChange = { searchQuery = it },
+            label = { Text("Search") },
+            modifier = Modifier.fillMaxWidth()
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(
+            onClick = { /* Handle search action */ },
+            modifier = Modifier.align(Alignment.End)
+        ) {
+            Text("Search")
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        LazyColumn {
+            items(customers) { customer ->
+                Text(text = customer.name)
+            }
+        }
+    }
+}
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.compose.runtime.Composable
