@@ -6,7 +6,7 @@ import androidx.fragment.app.Fragment
 
 import androidx.compose.runtime.*
 import androidx.compose.material3.*
-import androidx.compose.ui.text.input.TextFieldValue
+
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.graphics.Color
@@ -15,62 +15,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.input.TextFieldValue
 
-@Composable
-fun WalletScreenContent(balance: String, customers: List<Customer>) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Text(
-            text = "Wallet Balance: $balance",
-            style = MaterialTheme.typography.h6
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        var searchQuery by remember { mutableStateOf("") }
-        TextField(
-            value = searchQuery,
-            onValueChange = { searchQuery = it },
-            label = { Text("Search") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(
-            onClick = { /* Handle search action */ },
-            modifier = Modifier.align(Alignment.End)
-        ) {
-            Text("Search")
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        LazyColumn {
-            items(customers) { customer ->
-                Text(text = customer.name)
-            }
-        }
-    }
-}
-import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.compose.runtime.Composable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.asFlow
-import androidx.recyclerview.widget.RecyclerView
-import com.example.basicwallet.R
-import com.example.basicwallet.adapter.CustomerAdapter
-import com.example.basicwallet.databinding.FragmentWalletBinding
-import com.example.basicwallet.viewmodel.WalletViewModel
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.Flow
-import com.example.basicwallet.model.Customer
+
+
 
 class WalletScreen : Fragment(R.layout.fragment_wallet) {
 
@@ -122,29 +68,14 @@ class WalletScreen : Fragment(R.layout.fragment_wallet) {
         }
     }
 
-    binding.customerRecyclerView.apply {
-        layoutManager = LinearLayoutManager(context)
-        adapter = customerAdapter
-    }
 
-    lifecycleScope.launch {
-        viewModel.customerDataState.asFlow().collect { customers: List<Customer> ->
-
-            customerAdapter.submitList(customers)
-        }
-    }
-
-    binding.searchButton.setOnClickListener {
-        val query = binding.searchEditText.text.toString()
-        viewModel.searchCustomers(query)
-    }
 }
 }
 
 @Composable
 
 fun WalletScreenContent(balance: String, customers: List<Customer>) {
-    val balance by walletViewModel.balance.observeAsState()
+
     val searchQuery = remember { mutableStateOf("") }
 
     Column(
@@ -164,7 +95,8 @@ fun WalletScreenContent(balance: String, customers: List<Customer>) {
         }
         Spacer(modifier = Modifier.height(16.dp))
         LazyColumn {
-            items(walletViewModel.customers) { customer ->
+
+            items(customers) { customer ->
                 Text(text = customer.name)
             }
         }
